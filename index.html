@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Pessoal & Perfis v4.0</title>
+  <title>Dashboard Pessoal & Perfis v4.2</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <script>
@@ -33,10 +33,8 @@
         <p class="text-xs text-slate-400 mt-1">Escolha um perfil ou crie um novo (Máximo 3 perfis).</p>
       </div>
 
-      <!-- Lista de Perfis -->
       <div id="profilesList" class="grid grid-cols-1 gap-3"></div>
 
-      <!-- Login / Criar Perfil Modal Interno -->
       <div id="profileAuthBox" class="hidden space-y-3 pt-4 border-t border-slate-700">
         <h3 id="authBoxTitle" class="text-sm font-bold text-cyan-400">Entrar no Perfil</h3>
         <input type="password" id="profilePinInput" placeholder="Digite seu PIN/Senha" class="w-full px-4 py-2.5 rounded-xl bg-slate-800 text-white border border-slate-700 focus:outline-none focus:border-cyan-500 text-center text-sm">
@@ -134,25 +132,31 @@
         </div>
       </div>
 
-      <!-- ABA 4: METAS -->
+      <!-- ABA 4: METAS (ATUALIZADA) -->
       <div id="tab-metas" class="tab-content space-y-6">
         <div class="glass rounded-2xl overflow-hidden">
           <img src="https://images.unsplash.com/photo-1519834785169-98be25ec3f84?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Metas">
-          <div class="p-6 flex justify-between items-center"><h2 class="text-xl font-bold"><i class="fas fa-trophy text-cyan-500 mr-2"></i> Minhas Metas</h2><button onclick="addGoal()" class="px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded-xl text-sm">+ Nova Meta</button></div>
+          <div class="p-6 flex justify-between items-center">
+            <div>
+              <h2 class="text-xl font-bold"><i class="fas fa-trophy text-cyan-500 mr-2"></i> Minhas Metas</h2>
+              <p class="text-xs text-slate-400">Defina metas financeiras ou gerais e adicione aportes progressivos.</p>
+            </div>
+            <button onclick="addGoal()" class="px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded-xl text-sm">+ Nova Meta</button>
+          </div>
         </div>
         <div id="goalsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
       </div>
 
-      <!-- ABA 5: ALIMENTAÇÃO -->
+      <!-- ABA 5: ALIMENTAÇÃO (CORRIGIDA) -->
       <div id="tab-dieta" class="tab-content space-y-6">
         <div class="glass rounded-2xl overflow-hidden">
           <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Alimentação">
           <div class="p-6"><h2 class="text-xl font-bold mb-1"><i class="fas fa-apple-alt text-cyan-500 mr-2"></i> Plano Alimentar</h2><p class="text-xs text-slate-400">Adicione e remova itens da sua dieta.</p></div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="glass p-4 rounded-xl space-y-3"><div class="flex justify-between items-center"><h3 class="font-bold text-cyan-400">Cardápio do Dia</h3><button onclick="addDiet('plan')" class="text-xs bg-cyan-500/20 text-cyan-400 px-2 py-1 rounded">+ Add</button></div><ul id="dietPlan" class="space-y-2 text-sm"></ul></div>
-          <div class="glass p-4 rounded-xl space-y-3"><div class="flex justify-between items-center"><h3 class="font-bold text-emerald-400">Permitidos / Favoritos</h3><button onclick="addDiet('allowed')" class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded">+ Add</button></div><ul id="dietAllowed" class="space-y-2 text-sm"></ul></div>
-          <div class="glass p-4 rounded-xl space-y-3"><div class="flex justify-between items-center"><h3 class="font-bold text-rose-400">Alimentos a Evitar</h3><button onclick="addDiet('avoid')" class="text-xs bg-rose-500/20 text-rose-400 px-2 py-1 rounded">+ Add</button></div><ul id="dietAvoid" class="space-y-2 text-sm"></ul></div>
+          <div class="glass p-4 rounded-xl space-y-3"><div class="flex justify-between items-center"><h3 class="font-bold text-cyan-400">Cardápio do Dia</h3><button onclick="addDiet('dietPlan')" class="text-xs bg-cyan-500/20 text-cyan-400 px-2 py-1 rounded">+ Add</button></div><ul id="dietPlan" class="space-y-2 text-sm"></ul></div>
+          <div class="glass p-4 rounded-xl space-y-3"><div class="flex justify-between items-center"><h3 class="font-bold text-emerald-400">Permitidos / Favoritos</h3><button onclick="addDiet('dietAllowed')" class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded">+ Add</button></div><ul id="dietAllowed" class="space-y-2 text-sm"></ul></div>
+          <div class="glass p-4 rounded-xl space-y-3"><div class="flex justify-between items-center"><h3 class="font-bold text-rose-400">Alimentos a Evitar</h3><button onclick="addDiet('dietAvoid')" class="text-xs bg-rose-500/20 text-rose-400 px-2 py-1 rounded">+ Add</button></div><ul id="dietAvoid" class="space-y-2 text-sm"></ul></div>
         </div>
       </div>
 
@@ -224,13 +228,11 @@
   </div>
 
   <script>
-    // Gerenciador de Perfis
     let profiles = JSON.parse(localStorage.getItem('myDash_profiles') || '[]');
     let currentProfileIdx = null;
     let selectedProfileForAuth = null;
     let isCreatingNewProfile = false;
 
-    // Perfil Padrão se estiver vazio
     if (profiles.length === 0) {
       profiles.push({
         name: "Arthur",
@@ -239,7 +241,7 @@
           tasks: [{ text: "Treino de corrida (5km)", done: false }, { text: "Estudar Direito Constitucional", done: false }],
           routine: { "Segunda": ["08:00 - Foco", "19:00 - Faculdade"] },
           finances: [{ desc: "Entrada CLT", val: 810.50, type: "in" }],
-          goals: [{ title: "Zéfiro Triathlon Sprint", progress: 40 }],
+          goals: [{ title: "Reserva de Emergência", current: 100, target: 2000 }],
           dietPlan: ["Café: Ovos + Café sem açúcar"], dietAllowed: ["Banana"], dietAvoid: ["Frituras"],
           habits: ["Treinar", "Estudar"], kanban: { todo: ["Resumo de CP"], doing: [], done: [] },
           workouts: [{ name: "Corrida / Triatlo", detail: "5 km em 25min" }],
@@ -306,7 +308,6 @@
         saveProfilesStorage();
         cancelAuth();
         renderProfilesList();
-        alert(`Perfil de ${name} criado com sucesso!`);
       } else {
         if (val === profiles[selectedProfileForAuth].pin) {
           currentProfileIdx = selectedProfileForAuth;
@@ -314,9 +315,7 @@
           document.getElementById('appInterface').classList.remove('hidden');
           document.getElementById('activeProfileLabel').innerText = `Perfil: ${profiles[currentProfileIdx].name}`;
           renderAll();
-        } else {
-          alert("PIN incorreto!");
-        }
+        } else alert("PIN incorreto!");
       }
     }
 
@@ -329,17 +328,9 @@
     }
 
     function logoutProfile() {
-      saveCurrentProfileData();
       document.getElementById('appInterface').classList.add('hidden');
       document.getElementById('profileScreen').classList.remove('hidden');
-      cancelAuth();
-      renderProfilesList();
-    }
-
-    function saveCurrentProfileData() {
-      if (currentProfileIdx !== null && profiles[currentProfileIdx]) {
-        saveProfilesStorage();
-      }
+      cancelAuth(); renderProfilesList();
     }
 
     function getCurData() { return profiles[currentProfileIdx].data; }
@@ -437,47 +428,70 @@
       if(desc && val) { getCurData().finances.push({ desc, val, type }); saveProfilesStorage(); renderFinances(); }
     }
 
-    // METAS
+    // METAS COM APORTE E PROGRESSO AUTOMÁTICO
     function renderGoals() {
-      document.getElementById('goalsList').innerHTML = (getCurData().goals || []).map((g, i) => `
-        <div class="glass p-4 rounded-xl space-y-2">
-          <div class="flex justify-between font-bold text-sm">
+      document.getElementById('goalsList').innerHTML = (getCurData().goals || []).map((g, i) => {
+        const cur = g.current || 0;
+        const tgt = g.target || 100;
+        const pct = Math.min(100, Math.round((cur / tgt) * 100));
+        return `
+        <div class="glass p-4 rounded-xl space-y-3">
+          <div class="flex justify-between items-center font-bold text-sm">
             <span>${g.title}</span>
             <div class="flex items-center gap-2">
-              <span class="text-cyan-400">${g.progress}%</span>
+              <span class="text-cyan-400 text-xs font-mono">R$ ${cur.toFixed(2)} / R$ ${tgt.toFixed(2)} (${pct}%)</span>
               <button onclick="getCurData().goals.splice(${i}, 1); saveProfilesStorage(); renderGoals();" class="text-rose-400 hover:text-rose-600 text-xs"><i class="fas fa-trash"></i></button>
             </div>
           </div>
-          <div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
-            <div class="bg-cyan-500 h-full" style="width: ${g.progress}%"></div>
+          <div class="w-full bg-slate-700 h-2.5 rounded-full overflow-hidden">
+            <div class="bg-cyan-500 h-full transition-all duration-300" style="width: ${pct}%"></div>
+          </div>
+          <div class="flex justify-end gap-2 pt-1">
+            <button onclick="addProgress(${i})" class="px-3 py-1 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 text-xs font-bold rounded-lg border border-emerald-500/30">+ Aporte R$</button>
           </div>
         </div>
-      `).join('');
-    }
-    function addGoal() {
-      const title = prompt("Título da meta:");
-      const progress = parseInt(prompt("Porcentagem (0 a 100):") || "0");
-      if(title) { getCurData().goals.push({ title, progress }); saveProfilesStorage(); renderGoals(); }
+      `;
+      }).join('');
     }
 
-    // ALIMENTAÇÃO
+    function addGoal() {
+      const title = prompt("Nome da Meta (ex: Guardar R$ 2.000):");
+      if(!title) return;
+      const target = parseFloat(prompt("Valor Total Objetivo R$: (ex: 2000)") || "100");
+      const current = parseFloat(prompt("Valor Já Guardado R$: (ex: 0)") || "0");
+      getCurData().goals.push({ title, target, current });
+      saveProfilesStorage(); renderGoals();
+    }
+
+    function addProgress(idx) {
+      const val = parseFloat(prompt("Quanto você guardou/aportou hoje (R$)?"));
+      if(val && !isNaN(val)) {
+        getCurData().goals[idx].current = (getCurData().goals[idx].current || 0) + val;
+        saveProfilesStorage();
+        renderGoals();
+      }
+    }
+
+    // ALIMENTAÇÃO (CORRIGIDA)
     function renderDiet() {
-      const makeList = (arr, type) => (arr || []).map((item, i) => `
+      const makeList = (arr, key) => (arr || []).map((item, i) => `
         <li class="p-2 bg-slate-800/40 rounded flex justify-between items-center text-xs">
           <span>• ${item}</span>
-          <button onclick="getCurData()['${type}'].splice(${i}, 1); saveProfilesStorage(); renderDiet();" class="text-rose-400 hover:text-rose-600 text-[10px]"><i class="fas fa-times"></i></button>
+          <button onclick="getCurData()['${key}'].splice(${i}, 1); saveProfilesStorage(); renderDiet();" class="text-rose-400 hover:text-rose-600 text-[10px]"><i class="fas fa-times"></i></button>
         </li>
       `).join('');
       document.getElementById('dietPlan').innerHTML = makeList(getCurData().dietPlan, 'dietPlan');
       document.getElementById('dietAllowed').innerHTML = makeList(getCurData().dietAllowed, 'dietAllowed');
       document.getElementById('dietAvoid').innerHTML = makeList(getCurData().dietAvoid, 'dietAvoid');
     }
-    function addDiet(type) {
-      const item = prompt("Novo item:");
+    
+    function addDiet(key) {
+      const item = prompt("Novo item para a lista:");
       if(item) {
-        if(!getCurData()[type]) getCurData()[type] = [];
-        getCurData()[type].push(item);
-        saveProfilesStorage(); renderDiet();
+        if(!getCurData()[key]) getCurData()[key] = [];
+        getCurData()[key].push(item);
+        saveProfilesStorage(); 
+        renderDiet();
       }
     }
 
@@ -556,7 +570,6 @@
     }
     function resetTimer() { clearInterval(timerInt); timerRunning = false; timerSec = 1500; document.getElementById('timerDisplay').innerText = "25:00"; document.getElementById('timerBtn').innerText = "Iniciar Foco"; }
 
-    // Inicialização na Tela de Perfis
     renderProfilesList();
   </script>
 </body>
