@@ -3,84 +3,102 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Pessoal & Perfis v4.2</title>
+  <title>Dashboard Pessoal v5.0 (Premium)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <script>
     tailwind.config = {
       darkMode: 'class',
-      theme: { extend: { colors: { primary: { 50: '#f0f9ff', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490' } } } }
+      theme: { extend: { colors: { accent: 'var(--accent-color)' } } }
     }
   </script>
   <style>
-    .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); }
-    .dark .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+    :root {
+      --accent-color: #10b981; /* Verde Esmeralda Padrão */
+    }
+    .glass { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .light .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(14px); border: 1px solid rgba(0, 0, 0, 0.05); }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
-    .card-img { height: 120px; object-fit: cover; width: 100%; border-radius: 0.75rem 0.75rem 0 0; }
+    .card-img { height: 110px; object-fit: cover; width: 100%; border-radius: 0.75rem 0.75rem 0 0; }
+    .accent-bg { background-color: var(--accent-color) !important; }
+    .accent-text { color: var(--accent-color) !important; }
+    .accent-border { border-color: var(--accent-color) !important; }
   </style>
 </head>
-<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200">
+<body class="bg-slate-950 text-slate-100 min-h-screen transition-colors duration-200">
 
   <!-- Tela de Seleção de Perfis -->
-  <div id="profileScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/90 backdrop-blur-md p-4">
-    <div class="glass p-8 rounded-2xl shadow-2xl max-w-lg w-full text-center space-y-6 border border-slate-700">
-      <div class="w-16 h-16 bg-cyan-500/20 text-cyan-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+  <div id="profileScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-md p-4">
+    <div class="glass p-8 rounded-3xl shadow-2xl max-w-lg w-full text-center space-y-6">
+      <div class="w-16 h-16 accent-bg text-slate-950 rounded-2xl flex items-center justify-center mx-auto text-2xl font-bold shadow-lg">
         <i class="fas fa-users"></i>
       </div>
       <div>
-        <h2 class="text-2xl font-bold text-white">Selecione o seu Perfil</h2>
-        <p class="text-xs text-slate-400 mt-1">Escolha um perfil ou crie um novo (Máximo 3 perfis).</p>
+        <h2 class="text-2xl font-bold text-white">Central de Perfis</h2>
+        <p class="text-xs text-slate-400 mt-1">Selecione o seu perfil para entrar ou crie um novo.</p>
       </div>
 
       <div id="profilesList" class="grid grid-cols-1 gap-3"></div>
 
-      <div id="profileAuthBox" class="hidden space-y-3 pt-4 border-t border-slate-700">
-        <h3 id="authBoxTitle" class="text-sm font-bold text-cyan-400">Entrar no Perfil</h3>
-        <input type="password" id="profilePinInput" placeholder="Digite seu PIN/Senha" class="w-full px-4 py-2.5 rounded-xl bg-slate-800 text-white border border-slate-700 focus:outline-none focus:border-cyan-500 text-center text-sm">
+      <div id="profileAuthBox" class="hidden space-y-3 pt-4 border-t border-slate-800">
+        <h3 id="authBoxTitle" class="text-sm font-bold accent-text">Entrar no Perfil</h3>
+        <input type="password" id="profilePinInput" placeholder="Digite seu PIN/Senha" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 text-white border border-slate-800 focus:outline-none accent-border text-center text-sm">
         <div class="flex gap-2">
-          <button onclick="confirmProfileAuth()" class="flex-1 py-2 bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold rounded-xl text-sm transition">Confirmar</button>
-          <button onclick="cancelAuth()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm">Cancelar</button>
+          <button onclick="confirmProfileAuth()" class="flex-1 py-2.5 accent-bg text-slate-950 font-bold rounded-xl text-sm transition">Confirmar</button>
+          <button onclick="cancelAuth()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm">Cancelar</button>
         </div>
       </div>
 
-      <button id="btnCreateProfile" onclick="openCreateProfile()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-cyan-400 font-bold rounded-xl text-sm border border-slate-700 flex items-center justify-center gap-2">
-        <i class="fas fa-user-plus"></i> Criar Novo Perfil
+      <button id="btnCreateProfile" onclick="openCreateProfile()" class="w-full py-3 bg-slate-900 hover:bg-slate-850 text-slate-200 font-bold rounded-xl text-sm border border-slate-800 flex items-center justify-center gap-2">
+        <i class="fas fa-user-plus accent-text"></i> Criar Novo Perfil
       </button>
     </div>
   </div>
 
-  <!-- App Main -->
+  <!-- App Interface Main -->
   <div id="appInterface" class="hidden min-h-screen flex flex-col">
-    <!-- Top Header -->
-    <header class="glass sticky top-0 z-40 px-6 py-4 flex flex-wrap items-center justify-between border-b gap-4">
+    <!-- Top Header Navigation -->
+    <header class="glass sticky top-0 z-40 px-6 py-3 flex flex-wrap items-center justify-between border-b border-slate-800 gap-4">
       <div class="flex items-center space-x-3">
-        <i class="fas fa-layer-group text-cyan-500 text-2xl"></i>
+        <div class="w-9 h-9 accent-bg text-slate-950 rounded-xl flex items-center justify-center font-bold">
+          <i class="fas fa-chart-line"></i>
+        </div>
         <div>
-          <h1 class="font-bold text-lg tracking-wide leading-tight">Central de Produtividade</h1>
-          <span id="activeProfileLabel" class="text-xs text-cyan-400 font-semibold">Perfil: Arthur</span>
+          <h1 class="font-bold text-base tracking-wide leading-tight">Dashboard Pessoal</h1>
+          <span id="activeProfileLabel" class="text-xs accent-text font-semibold">Perfil: Arthur</span>
         </div>
       </div>
       
-      <!-- Nav Menu -->
+      <!-- Nav Tabs -->
       <nav class="flex items-center gap-1 overflow-x-auto py-1">
-        <button onclick="switchTab('tarefas')" class="nav-btn active px-3 py-2 rounded-xl text-xs font-semibold bg-cyan-500 text-slate-950" id="btn-tarefas"><i class="fas fa-tasks mr-1"></i> Tarefas</button>
-        <button onclick="switchTab('rotina')" class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-800" id="btn-rotina"><i class="fas fa-calendar-alt mr-1"></i> Rotina</button>
-        <button onclick="switchTab('financas')" class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-800" id="btn-financas"><i class="fas fa-wallet mr-1"></i> Finanças</button>
-        <button onclick="switchTab('metas')" class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-800" id="btn-metas"><i class="fas fa-bullseye mr-1"></i> Metas</button>
-        <button onclick="switchTab('dieta')" class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-800" id="btn-dieta"><i class="fas fa-utensils mr-1"></i> Alimentação</button>
-        <button onclick="switchTab('foco')" class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-800" id="btn-foco"><i class="fas fa-stopwatch mr-1"></i> Foco</button>
-        <button onclick="switchTab('habitos')" class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-800" id="btn-habitos"><i class="fas fa-fire mr-1"></i> Hábitos</button>
-        <button onclick="switchTab('kanban')" class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-800" id="btn-kanban"><i class="fas fa-columns mr-1"></i> Kanban</button>
-        <button onclick="switchTab('notas')" class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-800" id="btn-notas"><i class="fas fa-sticky-note mr-1"></i> Notas</button>
-        <button onclick="switchTab('saude')" class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-800" id="btn-saude"><i class="fas fa-heartbeat mr-1"></i> Saúde</button>
+        <button onclick="switchTab('home')" class="nav-btn active px-3 py-1.5 rounded-xl text-xs font-semibold accent-bg text-slate-950" id="btn-home"><i class="fas fa-home mr-1"></i> Home</button>
+        <button onclick="switchTab('tarefas')" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-slate-900" id="btn-tarefas"><i class="fas fa-tasks mr-1"></i> Tarefas</button>
+        <button onclick="switchTab('rotina')" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-slate-900" id="btn-rotina"><i class="fas fa-calendar-alt mr-1"></i> Rotina</button>
+        <button onclick="switchTab('financas')" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-slate-900" id="btn-financas"><i class="fas fa-wallet mr-1"></i> Finanças</button>
+        <button onclick="switchTab('metas')" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-slate-900" id="btn-metas"><i class="fas fa-bullseye mr-1"></i> Metas</button>
+        <button onclick="switchTab('saude')" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-slate-900" id="btn-saude"><i class="fas fa-heartbeat mr-1"></i> Treinos/Saúde</button>
+        <button onclick="switchTab('dieta')" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-slate-900" id="btn-dieta"><i class="fas fa-utensils mr-1"></i> Alimentação</button>
+        <button onclick="switchTab('foco')" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-slate-900" id="btn-foco"><i class="fas fa-stopwatch mr-1"></i> Foco</button>
+        <button onclick="switchTab('habitos')" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-slate-900" id="btn-habitos"><i class="fas fa-fire mr-1"></i> Hábitos</button>
+        <button onclick="switchTab('kanban')" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-slate-900" id="btn-kanban"><i class="fas fa-columns mr-1"></i> Kanban</button>
+        <button onclick="switchTab('notas')" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-slate-900" id="btn-notas"><i class="fas fa-sticky-note mr-1"></i> Notas</button>
       </nav>
 
-      <div class="flex items-center space-x-3">
-        <button onclick="toggleTheme()" class="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-cyan-400">
-          <i class="fas fa-moon dark:hidden"></i><i class="fas fa-sun hidden dark:inline"></i>
+      <!-- Opções & Ferramentas -->
+      <div class="flex items-center space-x-2">
+        <!-- Palette Theme Picker -->
+        <button onclick="cycleAccentColor()" class="p-2 rounded-xl bg-slate-900 text-slate-300 hover:text-white border border-slate-800" title="Trocar Cor de Destaque">
+          <i class="fas fa-palette accent-text"></i>
         </button>
-        <button onclick="logoutProfile()" class="px-3 py-2 bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 rounded-xl text-xs font-bold transition">
+        <!-- Export / Import Backup -->
+        <button onclick="exportBackup()" class="p-2 rounded-xl bg-slate-900 text-slate-300 hover:text-white border border-slate-800" title="Exportar Backup (.json)">
+          <i class="fas fa-download text-emerald-400"></i>
+        </button>
+        <button onclick="importBackup()" class="p-2 rounded-xl bg-slate-900 text-slate-300 hover:text-white border border-slate-800" title="Importar Backup (.json)">
+          <i class="fas fa-upload text-cyan-400"></i>
+        </button>
+        <button onclick="logoutProfile()" class="px-3 py-1.5 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 rounded-xl text-xs font-bold transition">
           <i class="fas fa-sign-out-alt mr-1"></i> Trocar Perfil
         </button>
       </div>
@@ -88,139 +106,206 @@
 
     <!-- Main Container -->
     <main class="flex-1 p-6 max-w-7xl mx-auto w-full">
-      
+
+      <!-- ABA 0: HOME / VISÃO GERAL -->
+      <div id="tab-home" class="tab-content active space-y-6">
+        <div class="glass p-6 rounded-3xl border border-slate-800 flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-bold">Bem-vindo de volta! 👋</h2>
+            <p class="text-xs text-slate-400 mt-1">Aqui está o resumo da sua produtividade e métricas de hoje.</p>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-slate-400 block">Status da Conta</span>
+            <span class="text-xs font-bold px-3 py-1 rounded-full accent-bg text-slate-950 inline-block mt-1">100% Sincronizado (Local)</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="glass p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
+            <div>
+              <span class="text-xs text-slate-400 block">Saldo Atual</span>
+              <h3 class="text-xl font-bold accent-text mt-0.5" id="homeBalance">R$ 0,00</h3>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center"><i class="fas fa-wallet"></i></div>
+          </div>
+          <div class="glass p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
+            <div>
+              <span class="text-xs text-slate-400 block">Tarefas Pendentes</span>
+              <h3 class="text-xl font-bold text-amber-400 mt-0.5" id="homePendingTasks">0</h3>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center"><i class="fas fa-tasks"></i></div>
+          </div>
+          <div class="glass p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
+            <div>
+              <span class="text-xs text-slate-400 block">Água de Hoje</span>
+              <h3 class="text-xl font-bold text-cyan-400 mt-0.5" id="homeWater">0 ml</h3>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center"><i class="fas fa-tint"></i></div>
+          </div>
+          <div class="glass p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
+            <div>
+              <span class="text-xs text-slate-400 block">Treinos Registrados</span>
+              <h3 class="text-xl font-bold text-purple-400 mt-0.5" id="homeWorkoutsCount">0</h3>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center"><i class="fas fa-running"></i></div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="glass p-6 rounded-2xl border border-slate-800 space-y-4">
+            <h3 class="font-bold text-sm accent-text"><i class="fas fa-bullseye mr-2"></i> Progresso das Principais Metas</h3>
+            <div id="homeGoalsPreview" class="space-y-3"></div>
+          </div>
+          <div class="glass p-6 rounded-2xl border border-slate-800 space-y-4">
+            <h3 class="font-bold text-sm text-cyan-400"><i class="fas fa-history mr-2"></i> Últimas Movimentações Financeiras</h3>
+            <ul id="homeRecentFinances" class="space-y-2 text-xs"></ul>
+          </div>
+        </div>
+      </div>
+
       <!-- ABA 1: TAREFAS -->
-      <div id="tab-tarefas" class="tab-content active space-y-6">
-        <div class="glass rounded-2xl overflow-hidden">
+      <div id="tab-tarefas" class="tab-content space-y-6">
+        <div class="glass rounded-2xl overflow-hidden border border-slate-800">
           <img src="https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Tarefas">
           <div class="p-6 flex justify-between items-center">
             <div>
               <h2 class="text-xl font-bold">Tarefas do Dia</h2>
-              <p class="text-xs text-slate-400">Adicione, marque como concluídas ou exclua tarefas.</p>
+              <p class="text-xs text-slate-400">Gerencie seus compromissos e afazeres diários.</p>
             </div>
-            <button onclick="addTask()" class="px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded-xl text-sm">+ Nova Tarefa</button>
+            <button onclick="addTask()" class="px-4 py-2 accent-bg text-slate-950 font-bold rounded-xl text-sm">+ Nova Tarefa</button>
           </div>
         </div>
-        <div class="glass p-6 rounded-2xl"><ul id="taskList" class="space-y-3"></ul></div>
+        <div class="glass p-6 rounded-2xl border border-slate-800"><ul id="taskList" class="space-y-3"></ul></div>
       </div>
 
       <!-- ABA 2: ROTINA -->
       <div id="tab-rotina" class="tab-content space-y-6">
-        <div class="glass rounded-2xl overflow-hidden">
+        <div class="glass rounded-2xl overflow-hidden border border-slate-800">
           <img src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Rotina">
           <div class="p-6">
-            <h2 class="text-xl font-bold"><i class="fas fa-calendar-week text-cyan-500 mr-2"></i> Cronograma Semanal</h2>
-            <p class="text-xs text-slate-400">Clique no botão + para adicionar compromissos na semana.</p>
+            <h2 class="text-xl font-bold"><i class="fas fa-calendar-week accent-text mr-2"></i> Cronograma Semanal</h2>
+            <p class="text-xs text-slate-400">Organize seus horários de treino, faculdade e trabalho.</p>
           </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-7 gap-4" id="routineGrid"></div>
       </div>
 
-      <!-- ABA 3: FINANÇAS -->
+      <!-- ABA 3: FINANÇAS (COM INTEGRAÇÃO ÀS METAS) -->
       <div id="tab-financas" class="tab-content space-y-6">
-        <div class="glass rounded-2xl overflow-hidden">
+        <div class="glass rounded-2xl overflow-hidden border border-slate-800">
           <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Finanças">
           <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="p-4 bg-slate-800/50 rounded-xl border-l-4 border-emerald-500"><span class="text-xs text-slate-400">Entradas</span><h3 class="text-2xl font-bold text-emerald-400" id="finIn">R$ 0,00</h3></div>
-            <div class="p-4 bg-slate-800/50 rounded-xl border-l-4 border-rose-500"><span class="text-xs text-slate-400">Saídas</span><h3 class="text-2xl font-bold text-rose-400" id="finOut">R$ 0,00</h3></div>
-            <div class="p-4 bg-slate-800/50 rounded-xl border-l-4 border-cyan-500"><span class="text-xs text-slate-400">Saldo Atual</span><h3 class="text-2xl font-bold text-cyan-400" id="finTotal">R$ 0,00</h3></div>
+            <div class="p-4 bg-slate-900/60 rounded-xl border-l-4 border-emerald-500"><span class="text-xs text-slate-400">Entradas</span><h3 class="text-2xl font-bold text-emerald-400" id="finIn">R$ 0,00</h3></div>
+            <div class="p-4 bg-slate-900/60 rounded-xl border-l-4 border-rose-500"><span class="text-xs text-slate-400">Saídas</span><h3 class="text-2xl font-bold text-rose-400" id="finOut">R$ 0,00</h3></div>
+            <div class="p-4 bg-slate-900/60 rounded-xl border-l-4 accent-border"><span class="text-xs text-slate-400">Saldo Atual</span><h3 class="text-2xl font-bold accent-text" id="finTotal">R$ 0,00</h3></div>
           </div>
         </div>
-        <div class="glass p-6 rounded-2xl space-y-4">
-          <div class="flex justify-between items-center"><h3 class="font-bold">Histórico de Transações</h3><button onclick="addTransaction()" class="px-3 py-1.5 bg-cyan-500 text-slate-950 font-bold rounded-lg text-xs">+ Lançamento</button></div>
+        <div class="glass p-6 rounded-2xl border border-slate-800 space-y-4">
+          <div class="flex justify-between items-center"><h3 class="font-bold">Histórico de Transações</h3><button onclick="addTransaction()" class="px-3 py-1.5 accent-bg text-slate-950 font-bold rounded-lg text-xs">+ Lançamento</button></div>
           <ul id="finList" class="space-y-2"></ul>
         </div>
       </div>
 
-      <!-- ABA 4: METAS (ATUALIZADA) -->
+      <!-- ABA 4: METAS -->
       <div id="tab-metas" class="tab-content space-y-6">
-        <div class="glass rounded-2xl overflow-hidden">
+        <div class="glass rounded-2xl overflow-hidden border border-slate-800">
           <img src="https://images.unsplash.com/photo-1519834785169-98be25ec3f84?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Metas">
           <div class="p-6 flex justify-between items-center">
             <div>
-              <h2 class="text-xl font-bold"><i class="fas fa-trophy text-cyan-500 mr-2"></i> Minhas Metas</h2>
-              <p class="text-xs text-slate-400">Defina metas financeiras ou gerais e adicione aportes progressivos.</p>
+              <h2 class="text-xl font-bold"><i class="fas fa-trophy accent-text mr-2"></i> Minhas Metas</h2>
+              <p class="text-xs text-slate-400">Acompanhe objetivos financeiros com aportes em tempo real.</p>
             </div>
-            <button onclick="addGoal()" class="px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded-xl text-sm">+ Nova Meta</button>
+            <button onclick="addGoal()" class="px-4 py-2 accent-bg text-slate-950 font-bold rounded-xl text-sm">+ Nova Meta</button>
           </div>
         </div>
         <div id="goalsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
       </div>
 
-      <!-- ABA 5: ALIMENTAÇÃO (CORRIGIDA) -->
-      <div id="tab-dieta" class="tab-content space-y-6">
-        <div class="glass rounded-2xl overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Alimentação">
-          <div class="p-6"><h2 class="text-xl font-bold mb-1"><i class="fas fa-apple-alt text-cyan-500 mr-2"></i> Plano Alimentar</h2><p class="text-xs text-slate-400">Adicione e remova itens da sua dieta.</p></div>
+      <!-- ABA 5: SAÚDE & TRIATLO (DETALHADO POR MODALIDADE) -->
+      <div id="tab-saude" class="tab-content space-y-6">
+        <div class="glass rounded-2xl overflow-hidden border border-slate-800">
+          <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Saúde">
+          <div class="p-6 flex justify-between items-center">
+            <div>
+              <h2 class="text-xl font-bold"><i class="fas fa-running accent-text mr-2"></i> Treinos & Triatlo</h2>
+              <p class="text-xs text-slate-400">Registro específico para Corrida, Ciclismo e Natação.</p>
+            </div>
+            <button onclick="addDetailedWorkout()" class="px-4 py-2 accent-bg text-slate-950 font-bold rounded-xl text-sm">+ Registrar Treino</button>
+          </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="glass p-4 rounded-xl space-y-3"><div class="flex justify-between items-center"><h3 class="font-bold text-cyan-400">Cardápio do Dia</h3><button onclick="addDiet('dietPlan')" class="text-xs bg-cyan-500/20 text-cyan-400 px-2 py-1 rounded">+ Add</button></div><ul id="dietPlan" class="space-y-2 text-sm"></ul></div>
-          <div class="glass p-4 rounded-xl space-y-3"><div class="flex justify-between items-center"><h3 class="font-bold text-emerald-400">Permitidos / Favoritos</h3><button onclick="addDiet('dietAllowed')" class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded">+ Add</button></div><ul id="dietAllowed" class="space-y-2 text-sm"></ul></div>
-          <div class="glass p-4 rounded-xl space-y-3"><div class="flex justify-between items-center"><h3 class="font-bold text-rose-400">Alimentos a Evitar</h3><button onclick="addDiet('dietAvoid')" class="text-xs bg-rose-500/20 text-rose-400 px-2 py-1 rounded">+ Add</button></div><ul id="dietAvoid" class="space-y-2 text-sm"></ul></div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="glass p-6 rounded-2xl border border-slate-800 text-center space-y-4">
+            <h3 class="font-bold text-lg"><i class="fas fa-glass-water text-cyan-400 mr-2"></i> Consumo de Água</h3>
+            <div class="text-5xl font-black text-cyan-400"><span id="waterCount">0</span> <span class="text-lg text-slate-400">/ 2000 ml</span></div>
+            <div class="flex justify-center gap-3"><button onclick="addWater(250)" class="px-4 py-2 accent-bg text-slate-950 font-bold rounded-xl">+250 ml</button><button onclick="resetWater()" class="px-4 py-2 bg-slate-900 text-slate-300 rounded-xl">Limpar</button></div>
+          </div>
+
+          <div class="glass p-6 rounded-2xl border border-slate-800 space-y-4">
+            <h3 class="font-bold text-lg"><i class="fas fa-dumbbell accent-text mr-2"></i> Histórico de Treinos</h3>
+            <div class="space-y-2" id="workoutList"></div>
+          </div>
         </div>
       </div>
 
-      <!-- ABA 6: FOCO & POMODORO -->
+      <!-- ABA 6: ALIMENTAÇÃO -->
+      <div id="tab-dieta" class="tab-content space-y-6">
+        <div class="glass rounded-2xl overflow-hidden border border-slate-800">
+          <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Alimentação">
+          <div class="p-6"><h2 class="text-xl font-bold mb-1"><i class="fas fa-apple-alt accent-text mr-2"></i> Plano Alimentar</h2></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="glass p-4 rounded-xl border border-slate-800 space-y-3"><div class="flex justify-between items-center"><h3 class="font-bold text-cyan-400">Cardápio do Dia</h3><button onclick="addDiet('dietPlan')" class="text-xs accent-bg text-slate-950 px-2 py-1 font-bold rounded">+ Add</button></div><ul id="dietPlan" class="space-y-2 text-sm"></ul></div>
+          <div class="glass p-4 rounded-xl border border-slate-800 space-y-3"><div class="flex justify-between items-center"><h3 class="font-bold text-emerald-400">Permitidos / Favoritos</h3><button onclick="addDiet('dietAllowed')" class="text-xs bg-emerald-500 text-slate-950 px-2 py-1 font-bold rounded">+ Add</button></div><ul id="dietAllowed" class="space-y-2 text-sm"></ul></div>
+          <div class="glass p-4 rounded-xl border border-slate-800 space-y-3"><div class="flex justify-between items-center"><h3 class="font-bold text-rose-400">Alimentos a Evitar</h3><button onclick="addDiet('dietAvoid')" class="text-xs bg-rose-500 text-slate-950 px-2 py-1 font-bold rounded">+ Add</button></div><ul id="dietAvoid" class="space-y-2 text-sm"></ul></div>
+        </div>
+      </div>
+
+      <!-- ABA 7: FOCO POMODORO -->
       <div id="tab-foco" class="tab-content space-y-6">
-        <div class="glass rounded-2xl overflow-hidden max-w-md mx-auto">
+        <div class="glass rounded-2xl overflow-hidden max-w-md mx-auto border border-slate-800">
           <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Foco">
           <div class="p-8 text-center space-y-6">
-            <h2 class="text-xl font-bold"><i class="fas fa-brain text-cyan-500 mr-2"></i> Timer Pomodoro</h2>
-            <div class="text-6xl font-black text-cyan-400 tracking-wider" id="timerDisplay">25:00</div>
+            <h2 class="text-xl font-bold"><i class="fas fa-brain accent-text mr-2"></i> Timer Pomodoro</h2>
+            <div class="text-6xl font-black accent-text tracking-wider" id="timerDisplay">25:00</div>
             <div class="flex justify-center gap-3">
-              <button onclick="toggleTimer()" id="timerBtn" class="px-6 py-2.5 bg-cyan-500 text-slate-950 font-bold rounded-xl">Iniciar Foco</button>
-              <button onclick="resetTimer()" class="px-4 py-2.5 bg-slate-800 text-slate-300 rounded-xl">Resetar</button>
+              <button onclick="toggleTimer()" id="timerBtn" class="px-6 py-2.5 accent-bg text-slate-950 font-bold rounded-xl">Iniciar Foco</button>
+              <button onclick="resetTimer()" class="px-4 py-2.5 bg-slate-900 text-slate-300 rounded-xl">Resetar</button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ABA 7: HÁBITOS -->
+      <!-- ABA 8: HÁBITOS -->
       <div id="tab-habitos" class="tab-content space-y-6">
-        <div class="glass rounded-2xl overflow-hidden">
+        <div class="glass rounded-2xl overflow-hidden border border-slate-800">
           <img src="https://images.unsplash.com/photo-1483721067970-22c608f6579d?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Hábitos">
-          <div class="p-6 flex justify-between items-center"><h2 class="text-xl font-bold"><i class="fas fa-fire text-cyan-500 mr-2"></i> Monitor de Hábitos</h2><button onclick="addHabit()" class="px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded-xl text-sm">+ Novo Hábito</button></div>
+          <div class="p-6 flex justify-between items-center"><h2 class="text-xl font-bold"><i class="fas fa-fire accent-text mr-2"></i> Monitor de Hábitos</h2><button onclick="addHabit()" class="px-4 py-2 accent-bg text-slate-950 font-bold rounded-xl text-sm">+ Novo Hábito</button></div>
         </div>
-        <div class="glass p-6 rounded-2xl"><div id="habitGrid" class="space-y-3"></div></div>
+        <div class="glass p-6 rounded-2xl border border-slate-800"><div id="habitGrid" class="space-y-3"></div></div>
       </div>
 
-      <!-- ABA 8: KANBAN -->
+      <!-- ABA 9: KANBAN -->
       <div id="tab-kanban" class="tab-content space-y-6">
-        <div class="glass rounded-2xl overflow-hidden">
+        <div class="glass rounded-2xl overflow-hidden border border-slate-800">
           <img src="https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Kanban">
-          <div class="p-6 flex justify-between items-center"><h2 class="text-xl font-bold"><i class="fas fa-columns text-cyan-500 mr-2"></i> Quadro Kanban</h2><button onclick="addKanban()" class="px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded-xl text-sm">+ Novo Cartão</button></div>
+          <div class="p-6 flex justify-between items-center"><h2 class="text-xl font-bold"><i class="fas fa-columns accent-text mr-2"></i> Quadro Kanban</h2><button onclick="addKanban()" class="px-4 py-2 accent-bg text-slate-950 font-bold rounded-xl text-sm">+ Novo Cartão</button></div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="glass p-4 rounded-2xl"><h3 class="font-bold mb-3 text-amber-400">A Fazer</h3><div id="kanbanTodo" class="space-y-2"></div></div>
-          <div class="glass p-4 rounded-2xl"><h3 class="font-bold mb-3 text-cyan-400">Em Andamento</h3><div id="kanbanDoing" class="space-y-2"></div></div>
-          <div class="glass p-4 rounded-2xl"><h3 class="font-bold mb-3 text-emerald-400">Concluído</h3><div id="kanbanDone" class="space-y-2"></div></div>
+          <div class="glass p-4 rounded-2xl border border-slate-800"><h3 class="font-bold mb-3 text-amber-400">A Fazer</h3><div id="kanbanTodo" class="space-y-2"></div></div>
+          <div class="glass p-4 rounded-2xl border border-slate-800"><h3 class="font-bold mb-3 text-cyan-400">Em Andamento</h3><div id="kanbanDoing" class="space-y-2"></div></div>
+          <div class="glass p-4 rounded-2xl border border-slate-800"><h3 class="font-bold mb-3 text-emerald-400">Concluído</h3><div id="kanbanDone" class="space-y-2"></div></div>
         </div>
       </div>
 
-      <!-- ABA 9: NOTAS -->
+      <!-- ABA 10: NOTAS -->
       <div id="tab-notas" class="tab-content space-y-6">
-        <div class="glass rounded-2xl overflow-hidden">
+        <div class="glass rounded-2xl overflow-hidden border border-slate-800">
           <img src="https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Notas">
-          <div class="p-6"><h2 class="text-xl font-bold"><i class="fas fa-edit text-cyan-500 mr-2"></i> Caderno de Anotações</h2></div>
+          <div class="p-6"><h2 class="text-xl font-bold"><i class="fas fa-edit accent-text mr-2"></i> Caderno de Anotações</h2></div>
         </div>
-        <div class="glass p-6 rounded-2xl">
-          <textarea id="notesArea" oninput="saveNotes()" class="w-full h-64 p-4 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-cyan-500" placeholder="Escreva suas ideias aqui..."></textarea>
-        </div>
-      </div>
-
-      <!-- ABA 10: SAÚDE -->
-      <div id="tab-saude" class="tab-content space-y-6">
-        <div class="glass rounded-2xl overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Saúde">
-          <div class="p-6 flex justify-between items-center"><h2 class="text-xl font-bold"><i class="fas fa-heartbeat text-cyan-500 mr-2"></i> Saúde & Atividades</h2><button onclick="addWorkout()" class="px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded-xl text-sm">+ Registrar Treino</button></div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="glass p-6 rounded-2xl text-center space-y-4">
-            <h3 class="font-bold text-lg"><i class="fas fa-glass-water text-cyan-400 mr-2"></i> Consumo de Água</h3>
-            <div class="text-5xl font-black text-cyan-400"><span id="waterCount">0</span> <span class="text-lg text-slate-400">/ 2000 ml</span></div>
-            <div class="flex justify-center gap-3"><button onclick="addWater(250)" class="px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded-xl">+250 ml</button><button onclick="resetWater()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl">Limpar</button></div>
-          </div>
-          <div class="glass p-6 rounded-2xl space-y-4"><h3 class="font-bold text-lg"><i class="fas fa-running text-cyan-400 mr-2"></i> Registro de Treinos</h3><div class="space-y-2" id="workoutList"></div></div>
+        <div class="glass p-6 rounded-2xl border border-slate-800">
+          <textarea id="notesArea" oninput="saveNotes()" class="w-full h-64 p-4 rounded-xl bg-slate-900 border border-slate-800 text-white focus:outline-none accent-border" placeholder="Escreva suas ideias aqui..."></textarea>
         </div>
       </div>
 
@@ -233,10 +318,22 @@
     let selectedProfileForAuth = null;
     let isCreatingNewProfile = false;
 
+    const accentColors = ['#10b981', '#8b5cf6', '#06b6d4', '#f59e0b', '#ef4444'];
+    let curAccentIdx = parseInt(localStorage.getItem('myDash_accentIdx') || '0');
+
+    function applyAccentColor() {
+      document.documentElement.style.setProperty('--accent-color', accentColors[curAccentIdx]);
+      localStorage.setItem('myDash_accentIdx', curAccentIdx);
+    }
+    function cycleAccentColor() {
+      curAccentIdx = (curAccentIdx + 1) % accentColors.length;
+      applyAccentColor();
+    }
+    applyAccentColor();
+
     if (profiles.length === 0) {
       profiles.push({
-        name: "Arthur",
-        pin: "1234",
+        name: "Arthur", pin: "1234",
         data: {
           tasks: [{ text: "Treino de corrida (5km)", done: false }, { text: "Estudar Direito Constitucional", done: false }],
           routine: { "Segunda": ["08:00 - Foco", "19:00 - Faculdade"] },
@@ -244,7 +341,7 @@
           goals: [{ title: "Reserva de Emergência", current: 100, target: 2000 }],
           dietPlan: ["Café: Ovos + Café sem açúcar"], dietAllowed: ["Banana"], dietAvoid: ["Frituras"],
           habits: ["Treinar", "Estudar"], kanban: { todo: ["Resumo de CP"], doing: [], done: [] },
-          workouts: [{ name: "Corrida / Triatlo", detail: "5 km em 25min" }],
+          workouts: [{ mode: "Corrida", name: "Treino Triatlo", detail: "5 km | Pace 5:10 min/km" }],
           notes: "Anotações do Arthur...", water: 500
         }
       });
@@ -254,26 +351,23 @@
     function saveProfilesStorage() { localStorage.setItem('myDash_profiles', JSON.stringify(profiles)); }
 
     function renderProfilesList() {
-      const list = document.getElementById('profilesList');
-      list.innerHTML = profiles.map((p, i) => `
-        <div class="p-4 bg-slate-800/80 hover:bg-slate-800 rounded-xl border border-slate-700 flex justify-between items-center transition">
+      document.getElementById('profilesList').innerHTML = profiles.map((p, i) => `
+        <div class="p-4 bg-slate-900/80 hover:bg-slate-900 rounded-xl border border-slate-800 flex justify-between items-center transition">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-lg">${p.name.charAt(0).toUpperCase()}</div>
+            <div class="w-10 h-10 rounded-full bg-slate-800 accent-text flex items-center justify-center font-bold text-lg">${p.name.charAt(0).toUpperCase()}</div>
             <span class="font-bold text-white text-base">${p.name}</span>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="promptAuth(${i})" class="px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded-lg text-xs">Entrar</button>
+            <button onclick="promptAuth(${i})" class="px-4 py-2 accent-bg text-slate-950 font-bold rounded-lg text-xs">Entrar</button>
             ${profiles.length > 1 ? `<button onclick="deleteProfile(${i})" class="p-2 text-rose-400 hover:text-rose-600 text-xs"><i class="fas fa-trash"></i></button>` : ''}
           </div>
         </div>
       `).join('');
-
       document.getElementById('btnCreateProfile').style.display = profiles.length >= 3 ? 'none' : 'flex';
     }
 
     function promptAuth(idx) {
-      selectedProfileForAuth = idx;
-      isCreatingNewProfile = false;
+      selectedProfileForAuth = idx; isCreatingNewProfile = false;
       document.getElementById('authBoxTitle').innerText = `Digite o PIN de ${profiles[idx].name}`;
       document.getElementById('profilePinInput').placeholder = "PIN / Senha";
       document.getElementById('profilePinInput').value = "";
@@ -283,7 +377,7 @@
     function openCreateProfile() {
       if(profiles.length >= 3) return alert("Limite máximo de 3 perfis atingido!");
       isCreatingNewProfile = true;
-      document.getElementById('authBoxTitle').innerText = "Novo Perfil: Digite Nome e PIN (ex: Arthur, 1234)";
+      document.getElementById('authBoxTitle').innerText = "Novo Perfil: Nome e PIN (ex: Arthur, 1234)";
       document.getElementById('profilePinInput').placeholder = "Nome e PIN (Ex: Arthur, 1234)";
       document.getElementById('profilePinInput').value = "";
       document.getElementById('profileAuthBox').classList.remove('hidden');
@@ -293,21 +387,12 @@
 
     function confirmProfileAuth() {
       const val = document.getElementById('profilePinInput').value.trim();
-      if (!val) return alert("Preencha o campo corretamente!");
-
+      if (!val) return alert("Preencha o campo!");
       if (isCreatingNewProfile) {
         const parts = val.split(',');
-        if (parts.length < 2) return alert("Digite no formato: NOME, PIN (Exemplo: Pedro, 1234)");
-        const name = parts[0].trim();
-        const pin = parts[1].trim();
-        
-        profiles.push({
-          name, pin,
-          data: { tasks: [], routine: {}, finances: [], goals: [], dietPlan: [], dietAllowed: [], dietAvoid: [], habits: [], kanban: { todo:[], doing:[], done:[] }, workouts: [], notes: "", water: 0 }
-        });
-        saveProfilesStorage();
-        cancelAuth();
-        renderProfilesList();
+        if (parts.length < 2) return alert("Digite no formato: NOME, PIN");
+        profiles.push({ name: parts[0].trim(), pin: parts[1].trim(), data: { tasks:[], routine:{}, finances:[], goals:[], dietPlan:[], dietAllowed:[], dietAvoid:[], habits:[], kanban:{todo:[],doing:[],done:[]}, workouts:[], notes:"", water:0 } });
+        saveProfilesStorage(); cancelAuth(); renderProfilesList();
       } else {
         if (val === profiles[selectedProfileForAuth].pin) {
           currentProfileIdx = selectedProfileForAuth;
@@ -320,10 +405,8 @@
     }
 
     function deleteProfile(idx) {
-      if (confirm(`Deseja mesmo excluir o perfil de ${profiles[idx].name}?`)) {
-        profiles.splice(idx, 1);
-        saveProfilesStorage();
-        renderProfilesList();
+      if (confirm(`Excluir perfil de ${profiles[idx].name}?`)) {
+        profiles.splice(idx, 1); saveProfilesStorage(); renderProfilesList();
       }
     }
 
@@ -337,56 +420,74 @@
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-cyan-500', 'text-slate-950'));
-      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.add('hover:bg-slate-800'));
-
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('accent-bg', 'text-slate-950'));
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.add('hover:bg-slate-900'));
       document.getElementById('tab-' + tabId).classList.add('active');
       const activeBtn = document.getElementById('btn-' + tabId);
-      if(activeBtn) {
-        activeBtn.classList.add('bg-cyan-500', 'text-slate-950');
-        activeBtn.classList.remove('hover:bg-slate-800');
-      }
+      if(activeBtn) { activeBtn.classList.add('accent-bg', 'text-slate-950'); activeBtn.classList.remove('hover:bg-slate-900'); }
+      if(tabId === 'home') renderHome();
     }
 
-    function toggleTheme() { document.documentElement.classList.toggle('dark'); }
-
     function renderAll() {
-      renderTasks(); renderRoutine(); renderFinances(); renderGoals();
+      renderHome(); renderTasks(); renderRoutine(); renderFinances(); renderGoals();
       renderDiet(); renderHabits(); renderKanban(); renderWorkouts();
       document.getElementById('notesArea').value = getCurData().notes || "";
       document.getElementById('waterCount').innerText = getCurData().water || 0;
     }
 
+    // HOME RESUMO
+    function renderHome() {
+      const data = getCurData();
+      let inc = 0, exp = 0;
+      (data.finances || []).forEach(f => f.type === 'in' ? inc += f.val : exp += f.val);
+      document.getElementById('homeBalance').innerText = `R$ ${(inc - exp).toFixed(2)}`;
+      document.getElementById('homePendingTasks').innerText = (data.tasks || []).filter(t => !t.done).length;
+      document.getElementById('homeWater').innerText = `${data.water || 0} ml`;
+      document.getElementById('homeWorkoutsCount').innerText = (data.workouts || []).length;
+
+      document.getElementById('homeGoalsPreview').innerHTML = (data.goals || []).slice(0, 3).map(g => {
+        const pct = Math.min(100, Math.round(((g.current||0) / (g.target||1)) * 100));
+        return `<div class="space-y-1">
+          <div class="flex justify-between text-xs font-bold"><span>${g.title}</span><span class="accent-text">${pct}%</span></div>
+          <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden"><div class="accent-bg h-full" style="width: ${pct}%"></div></div>
+        </div>`;
+      }).join('') || `<p class="text-xs text-slate-500">Nenhuma meta cadastrada.</p>`;
+
+      document.getElementById('homeRecentFinances').innerHTML = (data.finances || []).slice(-4).reverse().map(f => `
+        <li class="flex justify-between p-2 bg-slate-900/40 rounded">
+          <span>${f.desc}</span>
+          <span class="${f.type === 'in' ? 'text-emerald-400' : 'text-rose-400'} font-bold">R$ ${f.val.toFixed(2)}</span>
+        </li>
+      `).join('') || `<p class="text-xs text-slate-500">Sem lançamentos.</p>`;
+    }
+
     // TAREFAS
     function renderTasks() {
       document.getElementById('taskList').innerHTML = (getCurData().tasks || []).map((t, i) => `
-        <li class="p-3 bg-slate-800/50 rounded-xl flex justify-between items-center">
+        <li class="p-3 bg-slate-900/50 rounded-xl flex justify-between items-center border border-slate-800">
           <div class="flex items-center gap-3">
-            <input type="checkbox" ${t.done ? 'checked' : ''} onclick="getCurData().tasks[${i}].done = !getCurData().tasks[${i}].done; saveProfilesStorage(); renderTasks();" class="w-5 h-5 accent-cyan-500 rounded cursor-pointer">
+            <input type="checkbox" ${t.done ? 'checked' : ''} onclick="getCurData().tasks[${i}].done = !getCurData().tasks[${i}].done; saveProfilesStorage(); renderTasks();" class="w-5 h-5 accent-emerald-500 rounded cursor-pointer">
             <span class="${t.done ? 'line-through text-slate-500' : ''}">${t.text}</span>
           </div>
           <button onclick="getCurData().tasks.splice(${i}, 1); saveProfilesStorage(); renderTasks();" class="text-rose-400 hover:text-rose-600 text-xs p-1"><i class="fas fa-trash"></i></button>
         </li>
       `).join('');
     }
-    function addTask() {
-      const t = prompt("Descrição da nova tarefa:");
-      if(t) { getCurData().tasks.push({ text: t, done: false }); saveProfilesStorage(); renderTasks(); }
-    }
+    function addTask() { const t = prompt("Nova tarefa:"); if(t) { getCurData().tasks.push({ text: t, done: false }); saveProfilesStorage(); renderTasks(); } }
 
     // ROTINA
     function renderRoutine() {
       const days = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
       const rot = getCurData().routine || {};
       document.getElementById('routineGrid').innerHTML = days.map(d => `
-        <div class="glass p-3 rounded-xl space-y-2 border border-slate-700/50">
-          <div class="flex justify-between items-center border-b border-slate-700 pb-1">
-            <h4 class="font-bold text-xs text-cyan-400">${d}</h4>
-            <button onclick="addRoutineItem('${d}')" class="text-[10px] bg-cyan-500/20 text-cyan-400 px-1.5 py-0.5 rounded">+</button>
+        <div class="glass p-3 rounded-xl space-y-2 border border-slate-800">
+          <div class="flex justify-between items-center border-b border-slate-800 pb-1">
+            <h4 class="font-bold text-xs accent-text">${d}</h4>
+            <button onclick="addRoutineItem('${d}')" class="text-[10px] accent-bg text-slate-950 px-1.5 py-0.5 font-bold rounded">+</button>
           </div>
           <div class="space-y-1">
             ${(rot[d] || []).map((item, idx) => `
-              <div class="text-[11px] bg-slate-800/60 p-1.5 rounded flex justify-between items-center">
+              <div class="text-[11px] bg-slate-900/60 p-1.5 rounded flex justify-between items-center">
                 <span>${item}</span>
                 <button onclick="getCurData().routine['${d}'].splice(${idx}, 1); saveProfilesStorage(); renderRoutine();" class="text-rose-400 hover:text-rose-600 text-[10px] ml-1"><i class="fas fa-times"></i></button>
               </div>
@@ -395,21 +496,14 @@
         </div>
       `).join('');
     }
-    function addRoutineItem(day) {
-      const item = prompt(`Novo compromisso para ${day}:`);
-      if(item) {
-        if(!getCurData().routine[day]) getCurData().routine[day] = [];
-        getCurData().routine[day].push(item);
-        saveProfilesStorage(); renderRoutine();
-      }
-    }
+    function addRoutineItem(day) { const item = prompt(`Novo compromisso para ${day}:`); if(item) { if(!getCurData().routine[day]) getCurData().routine[day] = []; getCurData().routine[day].push(item); saveProfilesStorage(); renderRoutine(); } }
 
-    // FINANÇAS
+    // FINANÇAS COM INTEGRAÇÃO ÀS METAS
     function renderFinances() {
       let inc = 0, exp = 0;
       document.getElementById('finList').innerHTML = (getCurData().finances || []).map((f, i) => {
         if(f.type === 'in') inc += f.val; else exp += f.val;
-        return `<li class="p-3 bg-slate-800/40 rounded-xl flex justify-between items-center text-sm">
+        return `<li class="p-3 bg-slate-900/40 rounded-xl flex justify-between items-center text-sm border border-slate-800/60">
           <span>${f.desc}</span>
           <div class="flex items-center gap-3">
             <span class="${f.type === 'in' ? 'text-emerald-400' : 'text-rose-400'} font-bold">R$ ${f.val.toFixed(2)}</span>
@@ -421,61 +515,87 @@
       document.getElementById('finOut').innerText = `R$ ${exp.toFixed(2)}`;
       document.getElementById('finTotal').innerText = `R$ ${(inc - exp).toFixed(2)}`;
     }
+
     function addTransaction() {
-      const desc = prompt("Descrição:");
-      const val = parseFloat(prompt("Valor em R$:"));
-      const type = confirm("Pressione OK para Entrada ou Cancelar para Saída") ? "in" : "out";
-      if(desc && val) { getCurData().finances.push({ desc, val, type }); saveProfilesStorage(); renderFinances(); }
+      const desc = prompt("Descrição:"); const val = parseFloat(prompt("Valor R$:"));
+      if(!desc || isNaN(val)) return;
+      const type = confirm("OK = Entrada | Cancelar = Saída") ? "in" : "out";
+      getCurData().finances.push({ desc, val, type });
+
+      if (type === 'out' && (getCurData().goals || []).length > 0) {
+        if (confirm("Deseja enviar este valor como aporte para uma das suas Metas?")) {
+          const goalNames = getCurData().goals.map((g, idx) => `${idx + 1}. ${g.title}`).join('\n');
+          const choice = parseInt(prompt(`Escolha o número da meta:\n${goalNames}`)) - 1;
+          if (getCurData().goals[choice]) {
+            getCurData().goals[choice].current = (getCurData().goals[choice].current || 0) + val;
+            renderGoals();
+          }
+        }
+      }
+      saveProfilesStorage(); renderFinances();
     }
 
-    // METAS COM APORTE E PROGRESSO AUTOMÁTICO
+    // METAS
     function renderGoals() {
       document.getElementById('goalsList').innerHTML = (getCurData().goals || []).map((g, i) => {
-        const cur = g.current || 0;
-        const tgt = g.target || 100;
+        const cur = g.current || 0, tgt = g.target || 100;
         const pct = Math.min(100, Math.round((cur / tgt) * 100));
-        return `
-        <div class="glass p-4 rounded-xl space-y-3">
+        return `<div class="glass p-4 rounded-xl space-y-3 border border-slate-800">
           <div class="flex justify-between items-center font-bold text-sm">
             <span>${g.title}</span>
             <div class="flex items-center gap-2">
-              <span class="text-cyan-400 text-xs font-mono">R$ ${cur.toFixed(2)} / R$ ${tgt.toFixed(2)} (${pct}%)</span>
+              <span class="accent-text text-xs font-mono">R$ ${cur.toFixed(2)} / R$ ${tgt.toFixed(2)} (${pct}%)</span>
               <button onclick="getCurData().goals.splice(${i}, 1); saveProfilesStorage(); renderGoals();" class="text-rose-400 hover:text-rose-600 text-xs"><i class="fas fa-trash"></i></button>
             </div>
           </div>
-          <div class="w-full bg-slate-700 h-2.5 rounded-full overflow-hidden">
-            <div class="bg-cyan-500 h-full transition-all duration-300" style="width: ${pct}%"></div>
-          </div>
+          <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden"><div class="accent-bg h-full transition-all" style="width: ${pct}%"></div></div>
           <div class="flex justify-end gap-2 pt-1">
-            <button onclick="addProgress(${i})" class="px-3 py-1 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 text-xs font-bold rounded-lg border border-emerald-500/30">+ Aporte R$</button>
+            <button onclick="addProgress(${i})" class="px-3 py-1 accent-bg text-slate-950 text-xs font-bold rounded-lg">+ Aporte R$</button>
           </div>
-        </div>
-      `;
+        </div>`;
       }).join('');
     }
-
     function addGoal() {
-      const title = prompt("Nome da Meta (ex: Guardar R$ 2.000):");
-      if(!title) return;
-      const target = parseFloat(prompt("Valor Total Objetivo R$: (ex: 2000)") || "100");
-      const current = parseFloat(prompt("Valor Já Guardado R$: (ex: 0)") || "0");
-      getCurData().goals.push({ title, target, current });
-      saveProfilesStorage(); renderGoals();
+      const title = prompt("Nome da Meta:"); if(!title) return;
+      const target = parseFloat(prompt("Valor Objetivo R$:") || "100");
+      const current = parseFloat(prompt("Valor Já Guardado R$:") || "0");
+      getCurData().goals.push({ title, target, current }); saveProfilesStorage(); renderGoals();
+    }
+    function addProgress(idx) {
+      const val = parseFloat(prompt("Valor do Aporte R$:"));
+      if(val && !isNaN(val)) { getCurData().goals[idx].current = (getCurData().goals[idx].current || 0) + val; saveProfilesStorage(); renderGoals(); }
     }
 
-    function addProgress(idx) {
-      const val = parseFloat(prompt("Quanto você guardou/aportou hoje (R$)?"));
-      if(val && !isNaN(val)) {
-        getCurData().goals[idx].current = (getCurData().goals[idx].current || 0) + val;
-        saveProfilesStorage();
-        renderGoals();
+    // TREINOS DETALHADOS (CORRIDA, CICLISMO, NATAÇÃO)
+    function renderWorkouts() {
+      document.getElementById('workoutList').innerHTML = (getCurData().workouts || []).map((w, i) => `
+        <div class="p-3 bg-slate-900/50 rounded-xl text-sm flex justify-between items-center border border-slate-800">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold px-2 py-0.5 rounded accent-bg text-slate-950">${w.mode || 'Geral'}</span>
+              <span class="font-bold text-slate-200">${w.name}</span>
+            </div>
+            <span class="text-xs text-slate-400 block mt-1">${w.detail}</span>
+          </div>
+          <button onclick="getCurData().workouts.splice(${i}, 1); saveProfilesStorage(); renderWorkouts();" class="text-rose-400 hover:text-rose-600 text-xs"><i class="fas fa-trash"></i></button>
+        </div>
+      `).join('');
+    }
+    function addDetailedWorkout() {
+      const mode = prompt("Modalidade (Corrida, Ciclismo, Natação, Musculação):", "Corrida");
+      const name = prompt("Nome do Treino (ex: Treino Sprint 5k):");
+      const detail = prompt("Métricas (ex: 5 km | Pace 5:10 min/km | Tempo 25min):");
+      if(name && detail) {
+        if(!getCurData().workouts) getCurData().workouts = [];
+        getCurData().workouts.push({ mode, name, detail });
+        saveProfilesStorage(); renderWorkouts();
       }
     }
 
-    // ALIMENTAÇÃO (CORRIGIDA)
+    // ALIMENTAÇÃO
     function renderDiet() {
       const makeList = (arr, key) => (arr || []).map((item, i) => `
-        <li class="p-2 bg-slate-800/40 rounded flex justify-between items-center text-xs">
+        <li class="p-2 bg-slate-900/40 rounded flex justify-between items-center text-xs border border-slate-800/40">
           <span>• ${item}</span>
           <button onclick="getCurData()['${key}'].splice(${i}, 1); saveProfilesStorage(); renderDiet();" class="text-rose-400 hover:text-rose-600 text-[10px]"><i class="fas fa-times"></i></button>
         </li>
@@ -484,42 +604,30 @@
       document.getElementById('dietAllowed').innerHTML = makeList(getCurData().dietAllowed, 'dietAllowed');
       document.getElementById('dietAvoid').innerHTML = makeList(getCurData().dietAvoid, 'dietAvoid');
     }
-    
     function addDiet(key) {
-      const item = prompt("Novo item para a lista:");
-      if(item) {
-        if(!getCurData()[key]) getCurData()[key] = [];
-        getCurData()[key].push(item);
-        saveProfilesStorage(); 
-        renderDiet();
-      }
+      const item = prompt("Novo item:");
+      if(item) { if(!getCurData()[key]) getCurData()[key] = []; getCurData()[key].push(item); saveProfilesStorage(); renderDiet(); }
     }
 
-    // HÁBITOS
+    // HÁBITOS, KANBAN, NOTAS & ÁGUA
     function renderHabits() {
       const days = ["S", "T", "Q", "Q", "S", "S", "D"];
       document.getElementById('habitGrid').innerHTML = (getCurData().habits || []).map((h, i) => `
-        <div class="flex items-center justify-between p-3 bg-slate-800/40 rounded-xl text-sm">
+        <div class="flex items-center justify-between p-3 bg-slate-900/40 rounded-xl text-sm border border-slate-800">
           <div class="flex items-center gap-3">
             <button onclick="getCurData().habits.splice(${i}, 1); saveProfilesStorage(); renderHabits();" class="text-rose-400 hover:text-rose-600 text-xs"><i class="fas fa-trash"></i></button>
             <span>${h}</span>
           </div>
-          <div class="flex gap-1">
-            ${days.map(d => `<span class="w-7 h-7 rounded bg-slate-700 flex items-center justify-center text-xs cursor-pointer hover:bg-cyan-500 hover:text-slate-950 transition">${d}</span>`).join('')}
-          </div>
+          <div class="flex gap-1">${days.map(d => `<span class="w-7 h-7 rounded bg-slate-800 flex items-center justify-center text-xs cursor-pointer hover:accent-bg hover:text-slate-950 transition">${d}</span>`).join('')}</div>
         </div>
       `).join('');
     }
-    function addHabit() {
-      const h = prompt("Novo hábito:");
-      if(h) { getCurData().habits.push(h); saveProfilesStorage(); renderHabits(); }
-    }
+    function addHabit() { const h = prompt("Novo hábito:"); if(h) { getCurData().habits.push(h); saveProfilesStorage(); renderHabits(); } }
 
-    // KANBAN
     function renderKanban() {
       const k = getCurData().kanban || { todo:[], doing:[], done:[] };
       const renderCol = (arr, col) => (arr || []).map((item, i) => `
-        <div class="p-3 bg-slate-800/60 rounded-xl text-xs flex justify-between items-center">
+        <div class="p-3 bg-slate-900/60 rounded-xl text-xs flex justify-between items-center border border-slate-800">
           <span>${item}</span>
           <button onclick="getCurData().kanban['${col}'].splice(${i}, 1); saveProfilesStorage(); renderKanban();" class="text-rose-400 hover:text-rose-600"><i class="fas fa-times"></i></button>
         </div>
@@ -528,38 +636,18 @@
       document.getElementById('kanbanDoing').innerHTML = renderCol(k.doing, 'doing');
       document.getElementById('kanbanDone').innerHTML = renderCol(k.done, 'done');
     }
-    function addKanban() {
-      const item = prompt("Título do cartão:");
-      const col = prompt("Coluna (todo, doing ou done):", "todo");
-      if(item && getCurData().kanban[col]) { getCurData().kanban[col].push(item); saveProfilesStorage(); renderKanban(); }
-    }
-
-    // SAÚDE / TREINOS
-    function renderWorkouts() {
-      document.getElementById('workoutList').innerHTML = (getCurData().workouts || []).map((w, i) => `
-        <div class="p-3 bg-slate-800/50 rounded-xl text-sm flex justify-between items-center">
-          <div><span class="font-bold block text-slate-200">${w.name}</span><span class="text-xs text-slate-400">${w.detail}</span></div>
-          <button onclick="getCurData().workouts.splice(${i}, 1); saveProfilesStorage(); renderWorkouts();" class="text-rose-400 hover:text-rose-600 text-xs"><i class="fas fa-trash"></i></button>
-        </div>
-      `).join('');
-    }
-    function addWorkout() {
-      const name = prompt("Treino (ex: Corrida, Musculação):");
-      const detail = prompt("Detalhe (ex: 5 km):");
-      if(name && detail) { getCurData().workouts.push({ name, detail }); saveProfilesStorage(); renderWorkouts(); }
-    }
+    function addKanban() { const item = prompt("Título:"); const col = prompt("Coluna (todo, doing, done):", "todo"); if(item && getCurData().kanban[col]) { getCurData().kanban[col].push(item); saveProfilesStorage(); renderKanban(); } }
 
     function saveNotes() { getCurData().notes = document.getElementById('notesArea').value; saveProfilesStorage(); }
     function addWater(amount) { getCurData().water = (getCurData().water || 0) + amount; document.getElementById('waterCount').innerText = getCurData().water; saveProfilesStorage(); }
     function resetWater() { getCurData().water = 0; document.getElementById('waterCount').innerText = 0; saveProfilesStorage(); }
 
-    // Pomodoro Timer
+    // TIMER POMODORO
     let timerInt, timerSec = 1500, timerRunning = false;
     function toggleTimer() {
       if(timerRunning) { clearInterval(timerInt); timerRunning = false; document.getElementById('timerBtn').innerText = "Continuar"; }
       else {
-        timerRunning = true;
-        document.getElementById('timerBtn').innerText = "Pausar";
+        timerRunning = true; document.getElementById('timerBtn').innerText = "Pausar";
         timerInt = setInterval(() => {
           timerSec--;
           let m = Math.floor(timerSec / 60), s = timerSec % 60;
@@ -569,6 +657,40 @@
       }
     }
     function resetTimer() { clearInterval(timerInt); timerRunning = false; timerSec = 1500; document.getElementById('timerDisplay').innerText = "25:00"; document.getElementById('timerBtn').innerText = "Iniciar Foco"; }
+
+    // SISTEMA DE BACKUP (EXPORTAR E IMPORTAR JSON)
+    function exportBackup() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(profiles));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `meudash_backup_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function importBackup() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.onchange = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.readAsText(file, 'UTF-8');
+        reader.onload = readerEvent => {
+          try {
+            const imported = JSON.parse(readerEvent.target.result);
+            if (Array.isArray(imported)) {
+              profiles = imported;
+              saveProfilesStorage();
+              renderProfilesList();
+              alert("Backup importado com sucesso!");
+            } else alert("Arquivo de backup inválido!");
+          } catch (err) { alert("Erro ao ler o arquivo JSON."); }
+        }
+      }
+      input.click();
+    }
 
     renderProfilesList();
   </script>
