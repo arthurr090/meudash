@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Pessoal & Perfis v4.0</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: { primary: { 50: '#f0f9ff', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490' } } } }
+    }
+  </script>
+  <style>
+    .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); }
+    .dark .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .card-img { height: 120px; object-fit: cover; width: 100%; border-radius: 0.75rem 0.75rem 0 0; }
+  </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200">
+
+  <!-- Tela de Seleção de Perfis -->
+  <div id="profileScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/90 backdrop-blur-md p-4">
+    <div class="glass p-8 rounded-2xl shadow-2xl max-w-lg w-full text-center space-y-6 border border-slate-700">
+      <div class="w-16 h-16 bg-cyan-500/20 text-cyan-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+        <i class="fas fa-users"></i>
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-white">Selecione o seu Perfil</h2>
+        <p class="text-xs text-slate-400 mt-1">Escolha um perfil ou crie um novo (Máximo 3 perfis).</p>
+      </div>
+
+      <!-- Lista de Perfis -->
+      <div id="profilesList" class="grid grid-cols-1 gap-3"></div>
+
+      <!-- Login / Criar Perfil Modal Interno -->
+      <div id="profileAuthBox" class="hidden space-y-3 pt-4 border-t border-slate-700">
+        <h3 id="authBoxTitle" class="text-sm font-bold text-cyan-400">Entrar no Perfil</h3>
+        <input type="password" id="profilePinInput" placeholder="Digite seu PIN/Senha" class="w-full px-4 py-2.5 rounded-xl bg-slate-800 text-white border border-slate-700 focus:outline-none focus:border-cyan-500 text-center text-sm">
+        <div class="flex gap-2">
+          <button onclick="confirmProfileAuth()" class="flex-1 py-2 bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold rounded-xl text-sm transition">Confirmar</button>
+          <button onclick="cancelAuth()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm">Cancelar</button>
+        </div>
+      </div>
+
+      <button id="btnCreateProfile" onclick="openCreateProfile()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-cyan-400 font-bold rounded-xl text-sm border border-slate-700 flex items-center justify-center gap-2">
+        <i class="fas fa-user-plus"></i> Criar Novo Perfil
+      </button>
+    </div>
+  </div>
+
+  <!-- App Main -->
+  <div id="appInterface" class="hidden min-h-screen flex flex-col">
+    <!-- Top Header -->
+    <header class="glass sticky top-0 z-40 px-6 py-4 flex flex-wrap items-center justify-between border-b gap-4">
+      <div class="flex items-center space-x-3">
+        <i class="fas fa-layer-group text-cyan-500 text-2xl"></i>
+        <div>
+          <h1 class="font-bold text-lg tracking-wide leading-tight">Central de Produtividade</h1>
+          <span id="activeProfileLabel" class="text-xs text-cyan-400 font-semibold">Perfil: Arthur</span>
+        </div>
+      </div>
+      
+      <!-- Nav Menu -->
+      <nav class="flex items-center gap-1 overflow-x-auto py-1">
+        <button onclick="switchTab('tarefas')" class="nav-btn active px-3 py-2 rounded-xl text-xs font-semibold bg-cyan-500 text-slate-950" id="btn-tarefas"><i class="fas fa-tasks mr-1"></i> Tarefas</button>
+        <button onclick="switchTab('rotina')" class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-800" id="btn-rotina"><i class="fas fa-calendar-alt mr-1"></i> Rotina</button>
+        <button onclick="switchTab('financas')" class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-800" id="btn-financas"><i class="fas fa-wallet mr-1"></i> Finanças</button>
+        <button onclick="switchTab('metas')" class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-800" id="btn-metas"><i class="fas fa-bullseye mr-1"></i> Metas</button>
+        <button onclick="switchTab('dieta')" class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-800" id="btn-dieta"><i class="fas fa-utensils mr-1"></i> Alimentação</button>
+        <button onclick="switchTab('foco')" class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-800" id="btn-foco"><i class="fas fa-stopwatch mr-1"></i> Foco</button>
+        <button onclick="switchTab('habitos')" class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-800" id="btn-habitos"><i class="fas fa-fire mr-1"></i> Hábitos</button>
+        <button onclick="switchTab('kanban')" class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-800" id="btn-kanban"><i class="fas fa-columns mr-1"></i> Kanban</button>
+        <button onclick="switchTab('notas')" class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-800" id="btn-notas"><i class="fas fa-sticky-note mr-1"></i> Notas</button>
+        <button onclick="switchTab('saude')" class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-800" id="btn-saude"><i class="fas fa-heartbeat mr-1"></i> Saúde</button>
+      </nav>
+
+      <div class="flex items-center space-x-3">
+        <button onclick="toggleTheme()" class="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-cyan-400">
+          <i class="fas fa-moon dark:hidden"></i><i class="fas fa-sun hidden dark:inline"></i>
+        </button>
+        <button onclick="logoutProfile()" class="px-3 py-2 bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 rounded-xl text-xs font-bold transition">
+          <i class="fas fa-sign-out-alt mr-1"></i> Trocar Perfil
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 p-6 max-w-7xl mx-auto w-full">
+      
+      <!-- ABA 1: TAREFAS -->
+      <div id="tab-tarefas" class="tab-content active space-y-6">
+        <div class="glass rounded-2xl overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Tarefas">
+          <div class="p-6 flex justify-between items-center">
+            <div>
+              <h2 class="text-xl font-bold">Tarefas do Dia</h2>
+              <p class="text-xs text-slate-400">Adicione, marque como concluídas ou exclua tarefas.</p>
+            </div>
+            <button onclick="addTask()" class="px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded-xl text-sm">+ Nova Tarefa</button>
+          </div>
+        </div>
+        <div class="glass p-6 rounded-2xl"><ul id="taskList" class="space-y-3"></ul></div>
+      </div>
+
+      <!-- ABA 2: ROTINA -->
+      <div id="tab-rotina" class="tab-content space-y-6">
+        <div class="glass rounded-2xl overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Rotina">
+          <div class="p-6">
+            <h2 class="text-xl font-bold"><i class="fas fa-calendar-week text-cyan-500 mr-2"></i> Cronograma Semanal</h2>
+            <p class="text-xs text-slate-400">Clique no botão + para adicionar compromissos na semana.</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-7 gap-4" id="routineGrid"></div>
+      </div>
+
+      <!-- ABA 3: FINANÇAS -->
+      <div id="tab-financas" class="tab-content space-y-6">
+        <div class="glass rounded-2xl overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Finanças">
+          <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="p-4 bg-slate-800/50 rounded-xl border-l-4 border-emerald-500"><span class="text-xs text-slate-400">Entradas</span><h3 class="text-2xl font-bold text-emerald-400" id="finIn">R$ 0,00</h3></div>
+            <div class="p-4 bg-slate-800/50 rounded-xl border-l-4 border-rose-500"><span class="text-xs text-slate-400">Saídas</span><h3 class="text-2xl font-bold text-rose-400" id="finOut">R$ 0,00</h3></div>
+            <div class="p-4 bg-slate-800/50 rounded-xl border-l-4 border-cyan-500"><span class="text-xs text-slate-400">Saldo Atual</span><h3 class="text-2xl font-bold text-cyan-400" id="finTotal">R$ 0,00</h3></div>
+          </div>
+        </div>
+        <div class="glass p-6 rounded-2xl space-y-4">
+          <div class="flex justify-between items-center"><h3 class="font-bold">Histórico de Transações</h3><button onclick="addTransaction()" class="px-3 py-1.5 bg-cyan-500 text-slate-950 font-bold rounded-lg text-xs">+ Lançamento</button></div>
+          <ul id="finList" class="space-y-2"></ul>
+        </div>
+      </div>
+
+      <!-- ABA 4: METAS -->
+      <div id="tab-metas" class="tab-content space-y-6">
+        <div class="glass rounded-2xl overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1519834785169-98be25ec3f84?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Metas">
+          <div class="p-6 flex justify-between items-center"><h2 class="text-xl font-bold"><i class="fas fa-trophy text-cyan-500 mr-2"></i> Minhas Metas</h2><button onclick="addGoal()" class="px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded-xl text-sm">+ Nova Meta</button></div>
+        </div>
+        <div id="goalsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+      </div>
+
+      <!-- ABA 5: ALIMENTAÇÃO -->
+      <div id="tab-dieta" class="tab-content space-y-6">
+        <div class="glass rounded-2xl overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Alimentação">
+          <div class="p-6"><h2 class="text-xl font-bold mb-1"><i class="fas fa-apple-alt text-cyan-500 mr-2"></i> Plano Alimentar</h2><p class="text-xs text-slate-400">Adicione e remova itens da sua dieta.</p></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="glass p-4 rounded-xl space-y-3"><div class="flex justify-between items-center"><h3 class="font-bold text-cyan-400">Cardápio do Dia</h3><button onclick="addDiet('plan')" class="text-xs bg-cyan-500/20 text-cyan-400 px-2 py-1 rounded">+ Add</button></div><ul id="dietPlan" class="space-y-2 text-sm"></ul></div>
+          <div class="glass p-4 rounded-xl space-y-3"><div class="flex justify-between items-center"><h3 class="font-bold text-emerald-400">Permitidos / Favoritos</h3><button onclick="addDiet('allowed')" class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded">+ Add</button></div><ul id="dietAllowed" class="space-y-2 text-sm"></ul></div>
+          <div class="glass p-4 rounded-xl space-y-3"><div class="flex justify-between items-center"><h3 class="font-bold text-rose-400">Alimentos a Evitar</h3><button onclick="addDiet('avoid')" class="text-xs bg-rose-500/20 text-rose-400 px-2 py-1 rounded">+ Add</button></div><ul id="dietAvoid" class="space-y-2 text-sm"></ul></div>
+        </div>
+      </div>
+
+      <!-- ABA 6: FOCO & POMODORO -->
+      <div id="tab-foco" class="tab-content space-y-6">
+        <div class="glass rounded-2xl overflow-hidden max-w-md mx-auto">
+          <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Foco">
+          <div class="p-8 text-center space-y-6">
+            <h2 class="text-xl font-bold"><i class="fas fa-brain text-cyan-500 mr-2"></i> Timer Pomodoro</h2>
+            <div class="text-6xl font-black text-cyan-400 tracking-wider" id="timerDisplay">25:00</div>
+            <div class="flex justify-center gap-3">
+              <button onclick="toggleTimer()" id="timerBtn" class="px-6 py-2.5 bg-cyan-500 text-slate-950 font-bold rounded-xl">Iniciar Foco</button>
+              <button onclick="resetTimer()" class="px-4 py-2.5 bg-slate-800 text-slate-300 rounded-xl">Resetar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA 7: HÁBITOS -->
+      <div id="tab-habitos" class="tab-content space-y-6">
+        <div class="glass rounded-2xl overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1483721067970-22c608f6579d?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Hábitos">
+          <div class="p-6 flex justify-between items-center"><h2 class="text-xl font-bold"><i class="fas fa-fire text-cyan-500 mr-2"></i> Monitor de Hábitos</h2><button onclick="addHabit()" class="px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded-xl text-sm">+ Novo Hábito</button></div>
+        </div>
+        <div class="glass p-6 rounded-2xl"><div id="habitGrid" class="space-y-3"></div></div>
+      </div>
+
+      <!-- ABA 8: KANBAN -->
+      <div id="tab-kanban" class="tab-content space-y-6">
+        <div class="glass rounded-2xl overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Kanban">
+          <div class="p-6 flex justify-between items-center"><h2 class="text-xl font-bold"><i class="fas fa-columns text-cyan-500 mr-2"></i> Quadro Kanban</h2><button onclick="addKanban()" class="px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded-xl text-sm">+ Novo Cartão</button></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="glass p-4 rounded-2xl"><h3 class="font-bold mb-3 text-amber-400">A Fazer</h3><div id="kanbanTodo" class="space-y-2"></div></div>
+          <div class="glass p-4 rounded-2xl"><h3 class="font-bold mb-3 text-cyan-400">Em Andamento</h3><div id="kanbanDoing" class="space-y-2"></div></div>
+          <div class="glass p-4 rounded-2xl"><h3 class="font-bold mb-3 text-emerald-400">Concluído</h3><div id="kanbanDone" class="space-y-2"></div></div>
+        </div>
+      </div>
+
+      <!-- ABA 9: NOTAS -->
+      <div id="tab-notas" class="tab-content space-y-6">
+        <div class="glass rounded-2xl overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Notas">
+          <div class="p-6"><h2 class="text-xl font-bold"><i class="fas fa-edit text-cyan-500 mr-2"></i> Caderno de Anotações</h2></div>
+        </div>
+        <div class="glass p-6 rounded-2xl">
+          <textarea id="notesArea" oninput="saveNotes()" class="w-full h-64 p-4 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-cyan-500" placeholder="Escreva suas ideias aqui..."></textarea>
+        </div>
+      </div>
+
+      <!-- ABA 10: SAÚDE -->
+      <div id="tab-saude" class="tab-content space-y-6">
+        <div class="glass rounded-2xl overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1200&q=80" class="card-img" alt="Saúde">
+          <div class="p-6 flex justify-between items-center"><h2 class="text-xl font-bold"><i class="fas fa-heartbeat text-cyan-500 mr-2"></i> Saúde & Atividades</h2><button onclick="addWorkout()" class="px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded-xl text-sm">+ Registrar Treino</button></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="glass p-6 rounded-2xl text-center space-y-4">
+            <h3 class="font-bold text-lg"><i class="fas fa-glass-water text-cyan-400 mr-2"></i> Consumo de Água</h3>
+            <div class="text-5xl font-black text-cyan-400"><span id="waterCount">0</span> <span class="text-lg text-slate-400">/ 2000 ml</span></div>
+            <div class="flex justify-center gap-3"><button onclick="addWater(250)" class="px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded-xl">+250 ml</button><button onclick="resetWater()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl">Limpar</button></div>
+          </div>
+          <div class="glass p-6 rounded-2xl space-y-4"><h3 class="font-bold text-lg"><i class="fas fa-running text-cyan-400 mr-2"></i> Registro de Treinos</h3><div class="space-y-2" id="workoutList"></div></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // Gerenciador de Perfis
+    let profiles = JSON.parse(localStorage.getItem('myDash_profiles') || '[]');
+    let currentProfileIdx = null;
+    let selectedProfileForAuth = null;
+    let isCreatingNewProfile = false;
+
+    // Perfil Padrão se estiver vazio
+    if (profiles.length === 0) {
+      profiles.push({
+        name: "Arthur",
+        pin: "1234",
+        data: {
+          tasks: [{ text: "Treino de corrida (5km)", done: false }, { text: "Estudar Direito Constitucional", done: false }],
+          routine: { "Segunda": ["08:00 - Foco", "19:00 - Faculdade"] },
+          finances: [{ desc: "Entrada CLT", val: 810.50, type: "in" }],
+          goals: [{ title: "Zéfiro Triathlon Sprint", progress: 40 }],
+          dietPlan: ["Café: Ovos + Café sem açúcar"], dietAllowed: ["Banana"], dietAvoid: ["Frituras"],
+          habits: ["Treinar", "Estudar"], kanban: { todo: ["Resumo de CP"], doing: [], done: [] },
+          workouts: [{ name: "Corrida / Triatlo", detail: "5 km em 25min" }],
+          notes: "Anotações do Arthur...", water: 500
+        }
+      });
+      saveProfilesStorage();
+    }
+
+    function saveProfilesStorage() { localStorage.setItem('myDash_profiles', JSON.stringify(profiles)); }
+
+    function renderProfilesList() {
+      const list = document.getElementById('profilesList');
+      list.innerHTML = profiles.map((p, i) => `
+        <div class="p-4 bg-slate-800/80 hover:bg-slate-800 rounded-xl border border-slate-700 flex justify-between items-center transition">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-lg">${p.name.charAt(0).toUpperCase()}</div>
+            <span class="font-bold text-white text-base">${p.name}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="promptAuth(${i})" class="px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded-lg text-xs">Entrar</button>
+            ${profiles.length > 1 ? `<button onclick="deleteProfile(${i})" class="p-2 text-rose-400 hover:text-rose-600 text-xs"><i class="fas fa-trash"></i></button>` : ''}
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('btnCreateProfile').style.display = profiles.length >= 3 ? 'none' : 'flex';
+    }
+
+    function promptAuth(idx) {
+      selectedProfileForAuth = idx;
+      isCreatingNewProfile = false;
+      document.getElementById('authBoxTitle').innerText = `Digite o PIN de ${profiles[idx].name}`;
+      document.getElementById('profilePinInput').placeholder = "PIN / Senha";
+      document.getElementById('profilePinInput').value = "";
+      document.getElementById('profileAuthBox').classList.remove('hidden');
+    }
+
+    function openCreateProfile() {
+      if(profiles.length >= 3) return alert("Limite máximo de 3 perfis atingido!");
+      isCreatingNewProfile = true;
+      document.getElementById('authBoxTitle').innerText = "Novo Perfil: Digite Nome e PIN (ex: Arthur, 1234)";
+      document.getElementById('profilePinInput').placeholder = "Nome e PIN (Ex: Arthur, 1234)";
+      document.getElementById('profilePinInput').value = "";
+      document.getElementById('profileAuthBox').classList.remove('hidden');
+    }
+
+    function cancelAuth() { document.getElementById('profileAuthBox').classList.add('hidden'); }
+
+    function confirmProfileAuth() {
+      const val = document.getElementById('profilePinInput').value.trim();
+      if (!val) return alert("Preencha o campo corretamente!");
+
+      if (isCreatingNewProfile) {
+        const parts = val.split(',');
+        if (parts.length < 2) return alert("Digite no formato: NOME, PIN (Exemplo: Pedro, 1234)");
+        const name = parts[0].trim();
+        const pin = parts[1].trim();
+        
+        profiles.push({
+          name, pin,
+          data: { tasks: [], routine: {}, finances: [], goals: [], dietPlan: [], dietAllowed: [], dietAvoid: [], habits: [], kanban: { todo:[], doing:[], done:[] }, workouts: [], notes: "", water: 0 }
+        });
+        saveProfilesStorage();
+        cancelAuth();
+        renderProfilesList();
+        alert(`Perfil de ${name} criado com sucesso!`);
+      } else {
+        if (val === profiles[selectedProfileForAuth].pin) {
+          currentProfileIdx = selectedProfileForAuth;
+          document.getElementById('profileScreen').classList.add('hidden');
+          document.getElementById('appInterface').classList.remove('hidden');
+          document.getElementById('activeProfileLabel').innerText = `Perfil: ${profiles[currentProfileIdx].name}`;
+          renderAll();
+        } else {
+          alert("PIN incorreto!");
+        }
+      }
+    }
+
+    function deleteProfile(idx) {
+      if (confirm(`Deseja mesmo excluir o perfil de ${profiles[idx].name}?`)) {
+        profiles.splice(idx, 1);
+        saveProfilesStorage();
+        renderProfilesList();
+      }
+    }
+
+    function logoutProfile() {
+      saveCurrentProfileData();
+      document.getElementById('appInterface').classList.add('hidden');
+      document.getElementById('profileScreen').classList.remove('hidden');
+      cancelAuth();
+      renderProfilesList();
+    }
+
+    function saveCurrentProfileData() {
+      if (currentProfileIdx !== null && profiles[currentProfileIdx]) {
+        saveProfilesStorage();
+      }
+    }
+
+    function getCurData() { return profiles[currentProfileIdx].data; }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-cyan-500', 'text-slate-950'));
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.add('hover:bg-slate-800'));
+
+      document.getElementById('tab-' + tabId).classList.add('active');
+      const activeBtn = document.getElementById('btn-' + tabId);
+      if(activeBtn) {
+        activeBtn.classList.add('bg-cyan-500', 'text-slate-950');
+        activeBtn.classList.remove('hover:bg-slate-800');
+      }
+    }
+
+    function toggleTheme() { document.documentElement.classList.toggle('dark'); }
+
+    function renderAll() {
+      renderTasks(); renderRoutine(); renderFinances(); renderGoals();
+      renderDiet(); renderHabits(); renderKanban(); renderWorkouts();
+      document.getElementById('notesArea').value = getCurData().notes || "";
+      document.getElementById('waterCount').innerText = getCurData().water || 0;
+    }
+
+    // TAREFAS
+    function renderTasks() {
+      document.getElementById('taskList').innerHTML = (getCurData().tasks || []).map((t, i) => `
+        <li class="p-3 bg-slate-800/50 rounded-xl flex justify-between items-center">
+          <div class="flex items-center gap-3">
+            <input type="checkbox" ${t.done ? 'checked' : ''} onclick="getCurData().tasks[${i}].done = !getCurData().tasks[${i}].done; saveProfilesStorage(); renderTasks();" class="w-5 h-5 accent-cyan-500 rounded cursor-pointer">
+            <span class="${t.done ? 'line-through text-slate-500' : ''}">${t.text}</span>
+          </div>
+          <button onclick="getCurData().tasks.splice(${i}, 1); saveProfilesStorage(); renderTasks();" class="text-rose-400 hover:text-rose-600 text-xs p-1"><i class="fas fa-trash"></i></button>
+        </li>
+      `).join('');
+    }
+    function addTask() {
+      const t = prompt("Descrição da nova tarefa:");
+      if(t) { getCurData().tasks.push({ text: t, done: false }); saveProfilesStorage(); renderTasks(); }
+    }
+
+    // ROTINA
+    function renderRoutine() {
+      const days = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
+      const rot = getCurData().routine || {};
+      document.getElementById('routineGrid').innerHTML = days.map(d => `
+        <div class="glass p-3 rounded-xl space-y-2 border border-slate-700/50">
+          <div class="flex justify-between items-center border-b border-slate-700 pb-1">
+            <h4 class="font-bold text-xs text-cyan-400">${d}</h4>
+            <button onclick="addRoutineItem('${d}')" class="text-[10px] bg-cyan-500/20 text-cyan-400 px-1.5 py-0.5 rounded">+</button>
+          </div>
+          <div class="space-y-1">
+            ${(rot[d] || []).map((item, idx) => `
+              <div class="text-[11px] bg-slate-800/60 p-1.5 rounded flex justify-between items-center">
+                <span>${item}</span>
+                <button onclick="getCurData().routine['${d}'].splice(${idx}, 1); saveProfilesStorage(); renderRoutine();" class="text-rose-400 hover:text-rose-600 text-[10px] ml-1"><i class="fas fa-times"></i></button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+    function addRoutineItem(day) {
+      const item = prompt(`Novo compromisso para ${day}:`);
+      if(item) {
+        if(!getCurData().routine[day]) getCurData().routine[day] = [];
+        getCurData().routine[day].push(item);
+        saveProfilesStorage(); renderRoutine();
+      }
+    }
+
+    // FINANÇAS
+    function renderFinances() {
+      let inc = 0, exp = 0;
+      document.getElementById('finList').innerHTML = (getCurData().finances || []).map((f, i) => {
+        if(f.type === 'in') inc += f.val; else exp += f.val;
+        return `<li class="p-3 bg-slate-800/40 rounded-xl flex justify-between items-center text-sm">
+          <span>${f.desc}</span>
+          <div class="flex items-center gap-3">
+            <span class="${f.type === 'in' ? 'text-emerald-400' : 'text-rose-400'} font-bold">R$ ${f.val.toFixed(2)}</span>
+            <button onclick="getCurData().finances.splice(${i}, 1); saveProfilesStorage(); renderFinances();" class="text-rose-400 hover:text-rose-600 text-xs"><i class="fas fa-trash"></i></button>
+          </div>
+        </li>`;
+      }).join('');
+      document.getElementById('finIn').innerText = `R$ ${inc.toFixed(2)}`;
+      document.getElementById('finOut').innerText = `R$ ${exp.toFixed(2)}`;
+      document.getElementById('finTotal').innerText = `R$ ${(inc - exp).toFixed(2)}`;
+    }
+    function addTransaction() {
+      const desc = prompt("Descrição:");
+      const val = parseFloat(prompt("Valor em R$:"));
+      const type = confirm("Pressione OK para Entrada ou Cancelar para Saída") ? "in" : "out";
+      if(desc && val) { getCurData().finances.push({ desc, val, type }); saveProfilesStorage(); renderFinances(); }
+    }
+
+    // METAS
+    function renderGoals() {
+      document.getElementById('goalsList').innerHTML = (getCurData().goals || []).map((g, i) => `
+        <div class="glass p-4 rounded-xl space-y-2">
+          <div class="flex justify-between font-bold text-sm">
+            <span>${g.title}</span>
+            <div class="flex items-center gap-2">
+              <span class="text-cyan-400">${g.progress}%</span>
+              <button onclick="getCurData().goals.splice(${i}, 1); saveProfilesStorage(); renderGoals();" class="text-rose-400 hover:text-rose-600 text-xs"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+          <div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
+            <div class="bg-cyan-500 h-full" style="width: ${g.progress}%"></div>
+          </div>
+        </div>
+      `).join('');
+    }
+    function addGoal() {
+      const title = prompt("Título da meta:");
+      const progress = parseInt(prompt("Porcentagem (0 a 100):") || "0");
+      if(title) { getCurData().goals.push({ title, progress }); saveProfilesStorage(); renderGoals(); }
+    }
+
+    // ALIMENTAÇÃO
+    function renderDiet() {
+      const makeList = (arr, type) => (arr || []).map((item, i) => `
+        <li class="p-2 bg-slate-800/40 rounded flex justify-between items-center text-xs">
+          <span>• ${item}</span>
+          <button onclick="getCurData()['${type}'].splice(${i}, 1); saveProfilesStorage(); renderDiet();" class="text-rose-400 hover:text-rose-600 text-[10px]"><i class="fas fa-times"></i></button>
+        </li>
+      `).join('');
+      document.getElementById('dietPlan').innerHTML = makeList(getCurData().dietPlan, 'dietPlan');
+      document.getElementById('dietAllowed').innerHTML = makeList(getCurData().dietAllowed, 'dietAllowed');
+      document.getElementById('dietAvoid').innerHTML = makeList(getCurData().dietAvoid, 'dietAvoid');
+    }
+    function addDiet(type) {
+      const item = prompt("Novo item:");
+      if(item) {
+        if(!getCurData()[type]) getCurData()[type] = [];
+        getCurData()[type].push(item);
+        saveProfilesStorage(); renderDiet();
+      }
+    }
+
+    // HÁBITOS
+    function renderHabits() {
+      const days = ["S", "T", "Q", "Q", "S", "S", "D"];
+      document.getElementById('habitGrid').innerHTML = (getCurData().habits || []).map((h, i) => `
+        <div class="flex items-center justify-between p-3 bg-slate-800/40 rounded-xl text-sm">
+          <div class="flex items-center gap-3">
+            <button onclick="getCurData().habits.splice(${i}, 1); saveProfilesStorage(); renderHabits();" class="text-rose-400 hover:text-rose-600 text-xs"><i class="fas fa-trash"></i></button>
+            <span>${h}</span>
+          </div>
+          <div class="flex gap-1">
+            ${days.map(d => `<span class="w-7 h-7 rounded bg-slate-700 flex items-center justify-center text-xs cursor-pointer hover:bg-cyan-500 hover:text-slate-950 transition">${d}</span>`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+    function addHabit() {
+      const h = prompt("Novo hábito:");
+      if(h) { getCurData().habits.push(h); saveProfilesStorage(); renderHabits(); }
+    }
+
+    // KANBAN
+    function renderKanban() {
+      const k = getCurData().kanban || { todo:[], doing:[], done:[] };
+      const renderCol = (arr, col) => (arr || []).map((item, i) => `
+        <div class="p-3 bg-slate-800/60 rounded-xl text-xs flex justify-between items-center">
+          <span>${item}</span>
+          <button onclick="getCurData().kanban['${col}'].splice(${i}, 1); saveProfilesStorage(); renderKanban();" class="text-rose-400 hover:text-rose-600"><i class="fas fa-times"></i></button>
+        </div>
+      `).join('');
+      document.getElementById('kanbanTodo').innerHTML = renderCol(k.todo, 'todo');
+      document.getElementById('kanbanDoing').innerHTML = renderCol(k.doing, 'doing');
+      document.getElementById('kanbanDone').innerHTML = renderCol(k.done, 'done');
+    }
+    function addKanban() {
+      const item = prompt("Título do cartão:");
+      const col = prompt("Coluna (todo, doing ou done):", "todo");
+      if(item && getCurData().kanban[col]) { getCurData().kanban[col].push(item); saveProfilesStorage(); renderKanban(); }
+    }
+
+    // SAÚDE / TREINOS
+    function renderWorkouts() {
+      document.getElementById('workoutList').innerHTML = (getCurData().workouts || []).map((w, i) => `
+        <div class="p-3 bg-slate-800/50 rounded-xl text-sm flex justify-between items-center">
+          <div><span class="font-bold block text-slate-200">${w.name}</span><span class="text-xs text-slate-400">${w.detail}</span></div>
+          <button onclick="getCurData().workouts.splice(${i}, 1); saveProfilesStorage(); renderWorkouts();" class="text-rose-400 hover:text-rose-600 text-xs"><i class="fas fa-trash"></i></button>
+        </div>
+      `).join('');
+    }
+    function addWorkout() {
+      const name = prompt("Treino (ex: Corrida, Musculação):");
+      const detail = prompt("Detalhe (ex: 5 km):");
+      if(name && detail) { getCurData().workouts.push({ name, detail }); saveProfilesStorage(); renderWorkouts(); }
+    }
+
+    function saveNotes() { getCurData().notes = document.getElementById('notesArea').value; saveProfilesStorage(); }
+    function addWater(amount) { getCurData().water = (getCurData().water || 0) + amount; document.getElementById('waterCount').innerText = getCurData().water; saveProfilesStorage(); }
+    function resetWater() { getCurData().water = 0; document.getElementById('waterCount').innerText = 0; saveProfilesStorage(); }
+
+    // Pomodoro Timer
+    let timerInt, timerSec = 1500, timerRunning = false;
+    function toggleTimer() {
+      if(timerRunning) { clearInterval(timerInt); timerRunning = false; document.getElementById('timerBtn').innerText = "Continuar"; }
+      else {
+        timerRunning = true;
+        document.getElementById('timerBtn').innerText = "Pausar";
+        timerInt = setInterval(() => {
+          timerSec--;
+          let m = Math.floor(timerSec / 60), s = timerSec % 60;
+          document.getElementById('timerDisplay').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+          if(timerSec <= 0) { clearInterval(timerInt); alert("Tempo de foco concluído!"); resetTimer(); }
+        }, 1000);
+      }
+    }
+    function resetTimer() { clearInterval(timerInt); timerRunning = false; timerSec = 1500; document.getElementById('timerDisplay').innerText = "25:00"; document.getElementById('timerBtn').innerText = "Iniciar Foco"; }
+
+    // Inicialização na Tela de Perfis
+    renderProfilesList();
+  </script>
+</body>
+</html>
